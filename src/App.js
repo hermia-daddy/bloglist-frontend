@@ -15,7 +15,7 @@ const App = () => {
   const [blogs, setBlogs] = useState([])
 
   useEffect(() => {
-    const loggedUserJson = window.localStorage.getItem('loggedUser')
+    const loggedUserJson = window.localStorage.getItem('loggedBlogappUser')
     if (loggedUserJson) {
       const user = JSON.parse(loggedUserJson)
       setUser(user)
@@ -29,9 +29,10 @@ const App = () => {
     try {
       const user = await loginService.login({ username, password })
       setUser(user)
-      window.localStorage.setItem('loggedUser', JSON.stringify(user))
+      window.localStorage.setItem('loggedBlogappUser', JSON.stringify(user))
       setUsername('')
       setPassword('')
+      blogService.setToken(user.token)
       const blogs = await blogService.getAllBlogs()
       setBlogs(blogs)
     } catch (exception) {
@@ -94,6 +95,7 @@ const App = () => {
         username:
         <input
           type='text'
+          id='username'
           value={username}
           onChange={({ target }) => setUsername(target.value)}
         />
@@ -101,12 +103,15 @@ const App = () => {
       <div>
         password:
         <input
+          id='password'
           type='password'
           value={password}
           onChange={({ target }) => setPassword(target.value)}
         />
       </div>
-      <button type='submit'>login</button>
+      <button id='login-button' type='submit'>
+        login
+      </button>
     </form>
   )
 
